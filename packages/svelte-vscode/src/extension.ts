@@ -151,7 +151,7 @@ export function activateSvelteLanguageServer(context: ExtensionContext) {
     }
 
     const clientOptions: LanguageClientOptions = {
-        documentSelector: [{ scheme: 'file', language: 'svelte' }],
+        documentSelector: [{ scheme: '*', language: 'svelte' }],
         revealOutputChannelOn: RevealOutputChannelOn.Never,
         synchronize: {
             // TODO deprecated, rework upon next VS Code minimum version bump
@@ -531,8 +531,8 @@ function warnIfOldExtensionInstalled() {
     if (extensions.getExtension('JamesBirtles.svelte-vscode')) {
         window.showWarningMessage(
             'It seems you have the old and deprecated extension named "Svelte" installed. Please remove it. ' +
-                'Through the UI: You can find it when searching for "@installed" in the extensions window (searching "Svelte" won\'t work). ' +
-                'Command line: "code --uninstall-extension JamesBirtles.svelte-vscode"'
+            'Through the UI: You can find it when searching for "@installed" in the extensions window (searching "Svelte" won\'t work). ' +
+            'Command line: "code --uninstall-extension JamesBirtles.svelte-vscode"'
         );
     }
 }

@@ -68,3 +68,8 @@ dist
 
 # VSCode history extension
 .history
+
+# TEMP
+temp
+package-lock.json
+*.vsix
