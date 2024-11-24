@@ -266,7 +266,7 @@ function preprocessSvelteFile(document: Document, options: SvelteSnapshotOptions
 export class SvelteDocumentSnapshot implements DocumentSnapshot {
     private mapper?: DocumentMapper;
     private lineOffsets?: number[];
-    private url = pathToUrl(this.filePath);
+    private url = this.fileUrl;
 
     version = this.parent.version;
     isSvelte5Plus = Number(this.svelteVersion?.split('.')[0]) >= 5;
@@ -281,7 +281,11 @@ export class SvelteDocumentSnapshot implements DocumentSnapshot {
         private readonly exportedNames: IExportedNames,
         private readonly tsxMap?: EncodedSourceMap,
         private readonly htmlAst?: TemplateNode
-    ) {}
+    ) { }
+
+    get fileUrl() {
+        return this.parent.getURL() || '';
+    }
 
     get filePath() {
         return this.parent.getFilePath() || '';
@@ -650,9 +654,9 @@ export class DtsDocumentSnapshot extends JSOrTSDocumentSnapshot implements Docum
 
         const mapped = this.traceMap
             ? originalPositionFor(this.traceMap, {
-                  line: generatedPosition.line + 1,
-                  column: generatedPosition.character
-              })
+                line: generatedPosition.line + 1,
+                column: generatedPosition.character
+            })
             : undefined;
 
         if (!mapped || mapped.line == null || !mapped.source) {
@@ -662,8 +666,8 @@ export class DtsDocumentSnapshot extends JSOrTSDocumentSnapshot implements Docum
         const originalFilePath = URI.isUri(mapped.source)
             ? urlToPath(mapped.source)
             : this.filePath
-              ? resolve(dirname(this.filePath), mapped.source).toString()
-              : undefined;
+                ? resolve(dirname(this.filePath), mapped.source).toString()
+                : undefined;
 
         // ex: library publish with declarationMap but npmignore the original files
         if (!originalFilePath || !this.tsSys.fileExists(originalFilePath)) {

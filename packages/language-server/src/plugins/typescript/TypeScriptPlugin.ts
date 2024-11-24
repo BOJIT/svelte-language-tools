@@ -387,6 +387,8 @@ export class TypeScriptPlugin
 
     async getDefinitions(document: Document, position: Position): Promise<DefinitionLink[]> {
         const { lang, tsDoc, lsContainer } = await this.lsAndTsDocResolver.getLSAndTSDoc(document);
+        console.log("RESOLVE THIS!");
+        console.log(tsDoc);
 
         const defs = lang.getDefinitionAndBoundSpan(
             tsDoc.filePath,
