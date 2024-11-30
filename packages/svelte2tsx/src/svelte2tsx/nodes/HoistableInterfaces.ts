@@ -332,11 +332,38 @@ export class HoistableInterfaces {
         }
 
         const hoistable = this.determineHoistableInterfaces();
+
         if (hoistable.has(this.props_interface.name)) {
-            for (const [, node] of hoistable) {
-                str.move(node.pos + astOffset, node.end + astOffset, scriptStart);
+            for (const [name, node] of hoistable) {
+                let pos = node.pos + astOffset;
+
+                if (name === '$$ComponentProps') {
+                    // So that organize imports doesn't mess with the types
+                    str.prependRight(pos, '\n');
+                } else {
+                    // node.pos includes preceeding whitespace, which could mean we accidentally also move stuff appended to a previous node
+                    if (str.original[pos] === '\r') {
+                        pos++;
+                    }
+                    if (/\s/.test(str.original[pos])) {
+                        pos++;
+                    }
+
+                    // jsdoc comments would be ignored if they are on the same line as the ;, so we add a newline, too.
+                    // Also helps with organize imports not messing with the types
+                    str.prependRight(pos, ';\n');
+                    str.appendLeft(node.end + astOffset, ';');
+                }
+
+                str.move(pos, node.end + astOffset, scriptStart);
             }
+
+            return hoistable;
         }
+    }
+
+    getAllowedValues() {
+        return this.import_value_set;
     }
 
     /**
